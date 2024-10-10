@@ -7,13 +7,15 @@ import subprocess
 
 
 class color:
-    reset = '\033[0m'
-    red = '\033[31m'
-    yellow = '\033[33m'
-    magenta = '\033[35m'
-    cyan = '\033[36m'
-    gray = '\033[90m'
-    italic = '\033[3m'
+    violet = "\033[35;1m"
+    red = "\u001b[31;1m"
+    cyan = "\u001b[36;1m"
+    green = "\u001b[32;1m"
+    yellow = "\u001b[33;1m"
+    magenta = "\u001b[35;1m"
+    gray = "\033[90;1m"
+    italic = "\033[3;1m"
+    reset = "\u001b[0m"
 
 
 version = "1.1"
@@ -43,9 +45,9 @@ def update():
                 print(f"{color.yellow} A new version {color.green}({latestVersion}){color.yellow} is available. {color.gray}Updating...{color.reset}\n")
                 performUpdate()
         except urllib.error.URLError as e:
-            None
+            print()
         except Exception as e:
-            None
+            print()
 
     def performUpdate():
         try:
@@ -81,7 +83,6 @@ def control(var, a):
 
 def sure(cc, pn, ms):
     while True:
-        cls()
         intro()
         print(f"{color.cyan}    Country Code:  {color.gray}{cc}{color.reset}")
         print(f"{color.cyan}    Phone Number:  {color.gray}{pn}{color.reset}")
@@ -95,9 +96,7 @@ def sure(cc, pn, ms):
 
 def sendMessage():
     while True:
-        cls()
         intro()
-        update()
         countryCode = input(f"{color.cyan}    Country Code:  {color.gray}+{color.reset}")
         if control(countryCode, True):
             break
@@ -127,4 +126,5 @@ def sendMessage():
 with open("version.txt", 'w') as f:
     f.write(version)
 f.close()
+update()
 sendMessage()
