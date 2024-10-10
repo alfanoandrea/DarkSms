@@ -1,5 +1,9 @@
 import requests
 import os
+import urllib
+import urllib.request
+import urllib.error
+import subprocess
 
 
 class color:
@@ -12,11 +16,48 @@ class color:
     italic = '\033[3m'
 
 
-def cls():
-    if os.name == 'nt':
-        os.system("cls")
-    else:
-        os.system("clear")
+version = "1.2"
+versionURL = "https://github.com/alfanoandrea/DarkSms/raw/main/version.txt"
+repository = "https://github.com/alfanoandrea/DarkSms"
+
+
+def cls():   
+    os.system("cls") if os.name == 'nt' else os.system("clear")
+
+
+def internet():
+    try:
+        urllib.request.urlopen('https://www.google.com', timeout=5)
+        return True
+    except urllib.error.URLError:
+        return False
+
+
+def update():
+    intro(dynamic = False)
+    def checkVersion():
+        try:
+            with urllib.request.urlopen(versionURL, timeout=5) as f:
+                latestVersion = f.read().decode('utf-8').strip()    
+            if version != latestVersion:
+                print(f"{color.yellow} A new version {color.green}({latestVersion}){color.yellow} is available. {color.gray}Updating...{color.reset}\n")
+                performUpdate()
+        except urllib.error.URLError as e:
+            None
+        except Exception as e:
+            None
+
+    def performUpdate():
+        try:
+            subprocess.run(["git", "reset", "--hard", "HEAD"])
+            subprocess.run(["git", "pull", "origin", "main"])
+            print(f"{color.green} Update completed! Please run the script again.{color.reset}")
+            exit()
+        except Exception as e:
+            print(f"{color.red} Error updating the script!{color.reset}")
+
+    if internet():
+        checkVersion()
 
 
 def intro():
@@ -82,4 +123,7 @@ def sendMessage():
 
 
 
+with open("version.txt", 'w') as f:
+    f.write(version)
+f.close()
 sendMessage()
