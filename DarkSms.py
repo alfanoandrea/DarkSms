@@ -16,7 +16,7 @@ class color:
     italic = '\033[3m'
 
 
-version = "1.2"
+version = "1.1"
 versionURL = "https://github.com/alfanoandrea/DarkSms/raw/main/version.txt"
 repository = "https://github.com/alfanoandrea/DarkSms"
 
@@ -34,7 +34,7 @@ def internet():
 
 
 def update():
-    intro(dynamic = False)
+    intro()
     def checkVersion():
         try:
             with urllib.request.urlopen(versionURL, timeout=5) as f:
@@ -97,6 +97,7 @@ def sendMessage():
     while True:
         cls()
         intro()
+        update()
         countryCode = input(f"{color.cyan}    Country Code:  {color.gray}+{color.reset}")
         if control(countryCode, True):
             break
