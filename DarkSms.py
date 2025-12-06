@@ -1,4 +1,4 @@
-version = "1.2"
+version = "1.1"
 scriptURL = "https://raw.githubusercontent.com/alfanoandrea/DarkSms/main/DarkSms.py"
 
 import requests
