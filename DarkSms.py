@@ -2,8 +2,8 @@ version = "1.2"
 scriptURL = "https://raw.githubusercontent.com/alfanoandrea/DarkSms/main/DarkSms.py"
 
 import requests
+import re
 import os
-
 
 
 class color:
@@ -33,11 +33,9 @@ def internet():
 def update():
     intro()
     try:
-        response_check = requests.get(scriptURL, stream=True, headers={'Range': 'bytes=0-200'}, timeout=5)
+        response_check = requests.get(scriptURL, headers={'Range': 'bytes=0-200'}, timeout=5)
         response_check.raise_for_status()
-        first_lines = response_check.raw.read(200).decode('utf-8')
-        response_check.close() 
-        import re
+        first_lines = response_check.text
         match = re.search(r'version\s*=\s*["\'](\d+\.\d+)["\']', first_lines)    
         if not match:
             return
@@ -47,7 +45,7 @@ def update():
         return
 
     if version != latestVersion:
-        print(f"{color.yellow}     New version {color.green}({latestVersion}){color.yellow} avaible. Updating...{color.reset}\n")
+        print(f"{color.yellow}  New version {color.green}({latestVersion}){color.yellow} avaible. Updating...{color.reset}\n")
         try:
             response_script = requests.get(scriptURL, timeout=10)
             response_script.raise_for_status()
@@ -55,13 +53,13 @@ def update():
             with open(script_filename, 'w') as f:
                 f.write(response_script.text)
             
-            print(f"{color.green}     Update completed, you can restart the script.{color.reset}")
+            print(f"{color.green}  Update completed, you can restart the script.{color.reset}")
             exit(0)
             
         except requests.exceptions.RequestException:
-            print(f"{color.red}     [!] Error downloading script. Check {scriptURL}{color.reset}")
+            print(f"{color.red}  [!] Error downloading script. Check {scriptURL}{color.reset}")
         except IOError:
-             print(f"{color.red}     [!] Writing error! Check directory permissions.{color.reset}")
+             print(f"{color.red}  [!] Writing error! Check directory permissions.{color.reset}")
     else:
         pass
     
@@ -88,10 +86,10 @@ def control(var, a):
 def sure(cc, pn, ms):
     while True:
         intro()
-        print(f"{color.cyan}    Country Code:  {color.gray}{cc}{color.reset}")
-        print(f"{color.cyan}    Phone Number:  {color.gray}{pn}{color.reset}")
-        print(f"{color.cyan}    Message:  {color.gray}{ms}{color.reset}")
-        sel = input(f"\n{color.yellow}    Are you sure (y / n)?  {color.reset}").lower()
+        print(f"{color.cyan}  Country Code:  {color.gray}{cc}{color.reset}")
+        print(f"{color.cyan}  Phone Number:  {color.gray}{pn}{color.reset}")
+        print(f"{color.cyan}  Message:  {color.gray}{ms}{color.reset}")
+        sel = input(f"\n{color.yellow}  Are you sure (y / n)?  {color.reset}").lower()
         if sel == 'y':
             return True
         elif sel == 'n':
@@ -101,22 +99,22 @@ def sure(cc, pn, ms):
 def sendMessage():
     while True:
         intro()
-        countryCode = input(f"{color.cyan}    Country Code:  {color.gray}+{color.reset}")
+        countryCode = input(f"{color.cyan}  Country Code:  {color.gray}+{color.reset}")
         if control(countryCode, True):
             break
     countryCode = '+' + countryCode
     while True:
         cls()
         intro()
-        print(f"{color.cyan}    Country Code:  {color.gray}{countryCode}{color.reset}")
-        phoneNumber = input(f"{color.cyan}    Phone Number:  {color.reset}")
+        print(f"{color.cyan}  Country Code:  {color.gray}{countryCode}{color.reset}")
+        phoneNumber = input(f"{color.cyan}  Phone Number:  {color.reset}")
         if control(phoneNumber, False):
             break
     cls()
     intro()
-    print(f"{color.cyan}    Country Code:  {color.gray}{countryCode}{color.reset}")
-    print(f"{color.cyan}    Phone Number:  {color.gray}{phoneNumber}{color.reset}")
-    message = input(f"{color.cyan}    Message:  {color.reset}")
+    print(f"{color.cyan}  Country Code:  {color.gray}{countryCode}{color.reset}")
+    print(f"{color.cyan}  Phone Number:  {color.gray}{phoneNumber}{color.reset}")
+    message = input(f"{color.cyan}  Message:  {color.reset}")
     if not sure(countryCode, phoneNumber, message):
         sendMessage()
     resp = requests.post('https://textbelt.com/text',{
@@ -127,11 +125,9 @@ def sendMessage():
 
 
 if not internet():
-    print(f"{color.red} No internet connection!{color.reset}")
+    print(f"{color.red}  No internet connection!{color.reset}")
     exit()
     
-with open("version.txt", 'w') as f:
-    f.write(version)
-f.close()
+
 update()
 sendMessage()
