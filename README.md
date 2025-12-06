@@ -2,13 +2,6 @@
 
 DarkSMS is a Python script for sending anonymous SMS messages using the Textbelt service.
 
-## Requirements
-
-To run the script, you need to have Python installed on your system. Additionally, you'll need to use the `requests` module, which can be installed via `pip`:
-
-```
-pip install requests
-```
 
 ## Clone the Repository
 
@@ -20,6 +13,16 @@ To clone the DarkSMS repository, follow these steps:
 ```
 git clone https://github.com/alfanoandrea/DarkSms.git
 ```
+
+
+## Install Dependencies
+
+To run the script, you need to have Python installed on your system. Necessary libraries are listed in the `requirements.txt` file:
+
+```
+pip install -r requirements.txt
+```
+
 
 ## Usage
 
@@ -36,9 +39,11 @@ python3 DarkSms.py
 4. Follow the on-screen instructions to enter the international prefix, phone number, and message to send.
 5. Confirm sending the message when prompted.
 
+
 ## Warning
 
 Be careful not to abuse this service for sending spam or unwanted messages. Make sure to respect all local laws and regulations regarding SMS message sending.
+
 
 ## Credits
 
