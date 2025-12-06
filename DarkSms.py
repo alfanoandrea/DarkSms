@@ -1,9 +1,9 @@
+version = "1.2"
+scriptURL = "https://raw.githubusercontent.com/alfanoandrea/DarkSms/main/DarkSms.py"
+
 import requests
 import os
-import urllib
-import urllib.request
-import urllib.error
-import subprocess
+
 
 
 class color:
@@ -18,49 +18,53 @@ class color:
     reset = "\u001b[0m"
 
 
-version = "1.1"
-versionURL = "https://github.com/alfanoandrea/DarkSms/raw/main/version.txt"
-repository = "https://github.com/alfanoandrea/DarkSms"
-
-
 def cls():   
     os.system("cls") if os.name == 'nt' else os.system("clear")
 
 
 def internet():
     try:
-        urllib.request.urlopen('https://www.google.com', timeout=5)
+        requests.head('https://www.google.com', timeout=5) 
         return True
-    except urllib.error.URLError:
+    except requests.exceptions.RequestException:
         return False
 
 
 def update():
     intro()
-    def checkVersion():
+    try:
+        response_check = requests.get(scriptURL, stream=True, headers={'Range': 'bytes=0-200'}, timeout=5)
+        response_check.raise_for_status()
+        first_lines = response_check.raw.read(200).decode('utf-8')
+        response_check.close() 
+        import re
+        match = re.search(r'version\s*=\s*["\'](\d+\.\d+)["\']', first_lines)    
+        if not match:
+            return
+        latestVersion = match.group(1)
+        
+    except requests.exceptions.RequestException:
+        return
+
+    if version != latestVersion:
+        print(f"{color.yellow}     New version {color.green}({latestVersion}){color.yellow} avaible. Updating...{color.reset}\n")
         try:
-            with urllib.request.urlopen(versionURL, timeout=5) as f:
-                latestVersion = f.read().decode('utf-8').strip()    
-            if version != latestVersion:
-                print(f"{color.yellow} A new version {color.green}({latestVersion}){color.yellow} is available. {color.gray}Updating...{color.reset}\n")
-                performUpdate()
-        except urllib.error.URLError as e:
-            print()
-        except Exception as e:
-            print()
-
-    def performUpdate():
-        try:
-            subprocess.run(["git", "reset", "--hard", "HEAD"])
-            subprocess.run(["git", "pull", "origin", "main"])
-            print(f"{color.green} Update completed! Please run the script again.{color.reset}")
-            exit()
-        except Exception as e:
-            print(f"{color.red} Error updating the script!{color.reset}")
-
-    if internet():
-        checkVersion()
-
+            response_script = requests.get(scriptURL, timeout=10)
+            response_script.raise_for_status()
+            script_filename = os.path.basename(__file__)
+            with open(script_filename, 'w') as f:
+                f.write(response_script.text)
+            
+            print(f"{color.green}     Update completed, you can restart the script.{color.reset}")
+            exit(0)
+            
+        except requests.exceptions.RequestException:
+            print(f"{color.red}     [!] Error downloading script. Check {scriptURL}{color.reset}")
+        except IOError:
+             print(f"{color.red}     [!] Writing error! Check directory permissions.{color.reset}")
+    else:
+        pass
+    
 
 def intro():
     cls()
@@ -122,7 +126,10 @@ def sendMessage():
     print("\n   ", resp.json())
 
 
-
+if not internet():
+    print(f"{color.red} No internet connection!{color.reset}")
+    exit()
+    
 with open("version.txt", 'w') as f:
     f.write(version)
 f.close()
