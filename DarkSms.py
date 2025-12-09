@@ -1,5 +1,5 @@
 version = "1.2"
-scriptURL = "https://raw.githubusercontent.com/alfanoandrea/DarkSms/main/DarkSms.py"
+scriptURL = "https://raw.githubusercontent.com/alfanowski/DarkSms/main/DarkSms.py"
 
 
 import requests
